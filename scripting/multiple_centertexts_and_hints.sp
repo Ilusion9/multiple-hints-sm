@@ -29,7 +29,7 @@ EngineVersion g_EngineVersion;
 UserMsg g_UserMsg_TextMsg;
 UserMsg g_UserMsg_HintText;
 
-HintInfo g_HintMessages[MAXPLAYERS + 1][CENTER_TEXT_MAXCHANNELS + 1];
+HintInfo g_HintMessages[MAXPLAYERS + 1][HINT_TEXT_MAXCHANNELS + 1];
 HintInfo g_CenterMessages[MAXPLAYERS + 1][CENTER_TEXT_MAXCHANNELS + 1];
 
 public void OnPluginStart()
