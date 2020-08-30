@@ -19,7 +19,7 @@ enum struct HintInfo {
 
 #define CENTER_TEXT_MAXCHANNELS		16
 #define HINT_TEXT_MAXCHANNELS		16
-#define HUD_PRINTCENTER				4
+#define HUD_PRINTCENTER			4
 
 ConVar g_Cvar_StopHintSound;
 ConVar g_Cvar_CenterTextDuration;
