@@ -30,7 +30,7 @@ HintInfo g_CenterMessages[MAXPLAYERS + 1][CENTER_TEXT_MAXCHANNELS + 1];
 
 public void OnPluginStart()
 {
-	g_Cvar_CenterTextDuration = CreateConVar("sm_center_text_duration", "5.0", "Center text duration in seconds.", FCVAR_NONE, true, 0.0)
+	g_Cvar_CenterTextDuration = CreateConVar("sm_center_text_channel_duration", "5.0", "Center text duration in seconds for every channel.", FCVAR_NONE, true, 0.0);
 	g_EngineVersion = GetEngineVersion();
 	
 	g_UserMsg_TextMsg = GetUserMessageId("TextMsg");
@@ -69,7 +69,7 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 	
 	int channel;
 	int client = players[0];
-	char buffer[256];
+	char buffer[sizeof(HintInfo::message)];
 	
 	if (msg_id == g_UserMsg_HintText)
 	{
@@ -128,7 +128,7 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 		int pos = FindCharInString(buffer, '}');
 		if (pos != -1)
 		{			
-			char channelBuffer[256];
+			char channelBuffer[64];
 			strcopy(channelBuffer, sizeof(channelBuffer), buffer[1]);
 			channelBuffer[pos - 1] = 0;
 			
@@ -148,7 +148,7 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 		g_CenterMessages[client][channel - 1].time = gameTime;
 	}
 	
-	buffer[0] = 0;	
+	buffer[0] = 0;
 	for (int i = 0; i <= CENTER_TEXT_MAXCHANNELS; i++)
 	{
 		if (!g_CenterMessages[client][i].message[0])
@@ -244,7 +244,7 @@ public void Frame_SendHintText(DataPack pk)
 {
 	pk.Reset();
 	
-	char buffer[256];
+	char buffer[sizeof(HintInfo::message)];
 	int userId = pk.ReadCell();
 	pk.ReadString(buffer, sizeof(buffer));
 	delete pk;
