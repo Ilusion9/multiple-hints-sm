@@ -19,7 +19,7 @@ enum struct HintInfo {
 
 #define CENTER_TEXT_MAXCHANNELS		16
 #define HINT_TEXT_MAXCHANNELS		16
-#define HUD_PRINTCENTER			4
+#define HUD_PRINTCENTER				4
 
 ConVar g_Cvar_StopHintSound;
 ConVar g_Cvar_CenterTextDuration;
@@ -34,8 +34,8 @@ HintInfo g_CenterMessages[MAXPLAYERS + 1][CENTER_TEXT_MAXCHANNELS + 1];
 
 public void OnPluginStart()
 {
-	g_Cvar_CenterTextDuration = CreateConVar("sm_center_text_duration", "5.0", "Center text duration in seconds.", FCVAR_NONE, true, 0.0)
-	g_Cvar_HintTextDuration = CreateConVar("sm_hint_duration", "5.0", "Hint text duration in seconds.", FCVAR_NONE, true, 0.0)
+	g_Cvar_CenterTextDuration = CreateConVar("sm_center_text_channel_duration", "5.0", "Center text duration in seconds for every channel.", FCVAR_NONE, true, 0.0)
+	g_Cvar_HintTextDuration = CreateConVar("sm_channel_text_channel_duration", "5.0", "Hint text duration in seconds for every channel.", FCVAR_NONE, true, 0.0)
 	
 	g_Cvar_StopHintSound = FindConVar("sv_hudhint_sound");
 	if (g_Cvar_StopHintSound)
@@ -109,7 +109,6 @@ public Action UserMsg_CenterText(UserMsg msg_id, Handle msg, const int[] players
 	{
 		if (PbReadInt(msg, "msg_dst") == HUD_PRINTCENTER)
 		{
-			channel = CENTER_TEXT_MAXCHANNELS - 1;
 			PbReadString(msg, "params", buffer, sizeof(buffer), 0);
 		}
 		else
@@ -121,7 +120,6 @@ public Action UserMsg_CenterText(UserMsg msg_id, Handle msg, const int[] players
 	{
 		if (BfReadByte(msg) == HUD_PRINTCENTER)
 		{
-			channel = CENTER_TEXT_MAXCHANNELS - 1;
 			BfReadString(msg, buffer, sizeof(buffer));
 		}
 		else
