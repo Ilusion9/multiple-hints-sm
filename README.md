@@ -1,3 +1,6 @@
+# Alliedmods
+https://forums.alliedmods.net/showthread.php?t=327026
+
 # multiple_center_texts_and_hints
 Display multiple center texts and hints at once through channels.
 For games where hints texts are not displayed in the same place as center texts. Example: Counter-Strike Source.
@@ -37,7 +40,3 @@ PrintHintText(client, "{2}hint 2");
 ```
 sm_center_text_channel_duration 5.0
 ```
-
-# Alliedmods
-https://forums.alliedmods.net/showthread.php?t=327026
-
