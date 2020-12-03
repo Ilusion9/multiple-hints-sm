@@ -26,7 +26,7 @@ EngineVersion g_EngineVersion;
 UserMsg g_UserMsg_TextMsg;
 UserMsg g_UserMsg_HintText;
 
-HintInfo g_CenterMessages[MAXPLAYERS + 1][CENTER_TEXT_MAXCHANNELS + 1];
+HintInfo g_CenterMessages[MAXPLAYERS + 1][CENTER_TEXT_MAXCHANNELS];
 
 public void OnPluginStart()
 {
@@ -73,7 +73,7 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 	
 	if (msg_id == g_UserMsg_HintText)
 	{
-		channel = CENTER_TEXT_MAXCHANNELS;
+		channel = CENTER_TEXT_MAXCHANNELS - 1;
 		if (g_EngineVersion == Engine_CSGO || g_EngineVersion == Engine_Blade)
 		{
 			PbReadString(msg, "text", buffer, sizeof(buffer));
@@ -94,7 +94,7 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 		{
 			if (PbReadInt(msg, "msg_dst") == HUD_PRINTCENTER)
 			{
-				channel = CENTER_TEXT_MAXCHANNELS - 1;
+				channel = CENTER_TEXT_MAXCHANNELS - 2;
 				PbReadString(msg, "params", buffer, sizeof(buffer), 0);
 			}
 			else
@@ -106,7 +106,7 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 		{
 			if (BfReadByte(msg) == HUD_PRINTCENTER)
 			{
-				channel = CENTER_TEXT_MAXCHANNELS - 1;
+				channel = CENTER_TEXT_MAXCHANNELS - 2;
 				BfReadString(msg, buffer, sizeof(buffer));
 			}
 			else
@@ -126,14 +126,13 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 	if (buffer[0] == '{')
 	{
 		int pos = FindCharInString(buffer, '}');
-		if (pos != -1)
-		{			
+		if (pos > 1)
+		{
 			char channelBuffer[64];
-			strcopy(channelBuffer, sizeof(channelBuffer), buffer[1]);
-			channelBuffer[pos - 1] = 0;
+			strcopy(channelBuffer, pos, buffer[1]);
 			
 			int newChannel;
-			if (StringToIntEx(channelBuffer, newChannel) && newChannel >= 0 && newChannel <= CENTER_TEXT_MAXCHANNELS)
+			if (StringToIntEx(channelBuffer, newChannel) && newChannel >= 0 && newChannel < CENTER_TEXT_MAXCHANNELS)
 			{
 				channel = newChannel;
 				Format(buffer, sizeof(buffer), buffer[pos + 1]);
@@ -145,19 +144,22 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 	if (channel)
 	{
 		g_CenterMessages[client][channel - 1].message = buffer;
-		g_CenterMessages[client][channel - 1].time = gameTime;
+		g_CenterMessages[client][channel - 1].time = gameTime + g_Cvar_CenterTextDuration.FloatValue;
 	}
 	
 	buffer[0] = 0;
-	for (int i = 0; i <= CENTER_TEXT_MAXCHANNELS; i++)
+	bool messageExpired = false;
+	
+	for (int i = 0; i < CENTER_TEXT_MAXCHANNELS; i++)
 	{
 		if (!g_CenterMessages[client][i].message[0])
 		{
 			continue;
 		}
 		
-		if (gameTime - g_CenterMessages[client][i].time > g_Cvar_CenterTextDuration.FloatValue)
+		if (gameTime > g_CenterMessages[client][i].time)
 		{
+			messageExpired = true;
 			g_CenterMessages[client][i].message[0] = 0;
 			continue;
 		}
@@ -172,7 +174,7 @@ public Action UserMsg_CenterAndHintText(UserMsg msg_id, Handle msg, const int[] 
 		}
 	}
 	
-	if ((channel || buffer[0]))
+	if (channel || buffer[0] || messageExpired)
 	{
 		if (g_UserMsg_TextMsg)
 		{
