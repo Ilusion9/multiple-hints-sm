@@ -30,7 +30,7 @@ HintInfo g_CenterMessages[MAXPLAYERS + 1][CENTER_TEXT_MAXCHANNELS];
 
 public void OnPluginStart()
 {
-	g_Cvar_CenterTextDuration = CreateConVar("sm_center_text_channel_duration", "5.0", "Center text duration in seconds for every channel.", FCVAR_NONE, true, 0.0);
+	g_Cvar_CenterTextDuration = CreateConVar("sm_center_text_channel_duration", "6.0", "Center text duration in seconds for every channel.", FCVAR_NONE, true, 0.0);
 	g_EngineVersion = GetEngineVersion();
 	
 	g_UserMsg_TextMsg = GetUserMessageId("TextMsg");
